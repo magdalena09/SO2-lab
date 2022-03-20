@@ -11,9 +11,8 @@ mkdir ${SOURCE_DIR}
 # jesli nie istnieje, tworze folder ${TARGET_DIR}
 mkdir -p ${TARGET_DIR}
 
-LIST=$(cat ${RM_LIST})
-
 # iterowanie po zawartości pliku RM_LIST
+LIST=$(cat ${RM_LIST})
 for ELEMENT in ${LIST}; do
 
     # jeżeli plik o takiej nazwie występuje w katalogu SOURCE_DIR, to go usuwam
