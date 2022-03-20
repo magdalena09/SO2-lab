@@ -45,7 +45,9 @@ if [[ ${CONTENT} -gt 0 ]]; then
 
     if [[ ${CONTENT} -gt 4 ]]; then
         echo "zostalo wiecej niz 4 pliki"
-    else
+    fi
+    
+    if [[ ${CONTENT} -ge 2 ]] && [[ ${CONTENT} -le 4 ]]; then
         echo "cos piszemy"
     fi
 else
