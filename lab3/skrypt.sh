@@ -1,6 +1,7 @@
 #!/bin/bash -eu
 
 FILE_NOT_FOUND=11
+DIR_NOT_FOUND=99
 
 FILE="access_log"
 
@@ -23,6 +24,38 @@ cat ${FILE} | grep  "\"DELETE " | sort -u
  
 #------------------------------------------------------------------------
 
+FILE2="yolo.csv"
+
+if [[ ! -f "${FILE2}" ]]; then
+    echo "Nie ma takiego pliku"
+    exit ${FILE_NOT_FOUND}
+fi
 
 
+# Z pliku yolo.csv wypisz wszystkich, których id jest liczbą nieparzystą. Wyniki zapisz na standardowe wyjście błędów.
+cat ${FILE2} | grep -E "^[0-9]{0,}[13579]," >&2
 
+# Z pliku yolo.csv wypisz każdego, kto jest wart dokładnie $2.99 lub $5.99 lub $9.99. Nie wazne czy milionów, czy miliardów (tylko nazwisko i wartość).
+# Wyniki zapisz na standardowe wyjście błędów
+cat ${FILE2} | grep "\$[259]\.99.$" | cut -d',' -f3,7 >&2
+
+#------------------------------------------------------------------------
+
+DIR="groovies"
+
+if [[ ! -d "${DIR}" ]]; then
+    echo "Nie ma takiego katalogu"
+    exit ${DIR_NOT_FOUND}
+fi
+
+FILES=$(ls ${DIR})
+
+cd ${DIR}
+
+for FILE in ${FILES}; do
+    # We wszystkich plikach w katalogu ‘groovies’ zamień $HEADER$ na /temat/
+    sed -i 's|\$HEADER\$|\/temat\/|g' ${FILE}
+
+    # We wszystkich plikach w katalogu ‘groovies’ usuń linijki zawierające frazę 'Help docs:'
+    sed -i '/Help docs:/d' ${FILE}
+done
