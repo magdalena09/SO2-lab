@@ -83,12 +83,14 @@ function print_xml_format () {
 }
 
 while getopts ":hd:t:a:f:x" OPT; do
+    IFD=false
     case ${OPT} in
         h)
             print_help
             exit 0
             ;;
         d)
+            IFD=true
             MOVIES_DIR=${OPTARG}
             ;;
         t)
@@ -110,6 +112,13 @@ while getopts ":hd:t:a:f:x" OPT; do
             exit 1
             ;;
     esac
+
+    if ${IFD:-false}; then
+        if [[ ! -d ${MOVIES_DIR} ]]; then
+            echo "nie podano katalogu w -d"
+            exit 1
+        fi
+    fi
 done
 
 MOVIES_LIST=$(get_movies_list "${MOVIES_DIR}")
