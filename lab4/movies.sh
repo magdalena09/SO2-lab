@@ -6,6 +6,7 @@ function print_help () {
     echo -e "-a ACTOR\n\tSearch movies that this ACTOR played in"
     echo -e "-t QUERY\n\tSearch movies with given QUERY in title"
     echo -e "-f FILENAME\n\tSaves results to file (default: results.txt)"
+    echo -e "-y ROK\n\tSearch movies with given year"
     echo -e "-x\n\tPrints results in XML format"
     echo -e "-h\n\tPrints this help message"
 }
@@ -28,6 +29,20 @@ function query_title () {
     local RESULTS_LIST=()
     for MOVIE_FILE in ${MOVIES_LIST}; do
         if grep "| Title" "${MOVIE_FILE}" | grep -q "${QUERY}"; then
+            RESULTS_LIST+=( "${MOVIE_FILE}" )
+        fi
+    done
+    echo "${RESULTS_LIST[@]:-}"
+}
+
+function query_rok() {
+    # Returns list of movies from ${1} with ${2} in year slot
+    local -r MOVIES_LIST=${1}
+    local -r QUERY=${2}
+
+    local RESULTS_LIST=()
+    for MOVIE_FILE in ${MOVIES_LIST}; do
+        if grep "| Year" "${MOVIE_FILE}" | grep -q "${QUERY}"; then
             RESULTS_LIST+=( "${MOVIE_FILE}" )
         fi
     done
@@ -81,9 +96,9 @@ function print_xml_format () {
 
     echo "${TEMP}"
 }
-
-while getopts ":hd:t:a:f:x" OPT; do
-    IFD=false
+IFD=false
+while getopts ":hd:t:a:y:f:x" OPT; do
+    
     case ${OPT} in
         h)
             print_help
@@ -103,6 +118,10 @@ while getopts ":hd:t:a:f:x" OPT; do
         a)
             SEARCHING_ACTOR=true
             QUERY_ACTOR=${OPTARG}
+            ;;
+        y)
+            SEARCHING_ROK=true
+            QUERY_ROK=${OPTARG}
             ;;
         x)
             OUTPUT_FORMAT="xml"
@@ -125,6 +144,10 @@ MOVIES_LIST=$(get_movies_list "${MOVIES_DIR}")
 
 if ${SEARCHING_TITLE:-false}; then
     MOVIES_LIST=$(query_title "${MOVIES_LIST}" "${QUERY_TITLE}")
+fi
+
+if ${SEARCHING_ROK-false}; then
+    MOVIES_LIST=$(query_rok "${MOVIES_LIST}" "${QUERY_ROK}")
 fi
 
 if ${SEARCHING_ACTOR:-false}; then
